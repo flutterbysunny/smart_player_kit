@@ -1,3 +1,4 @@
+import '../controls/smart_controls.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
@@ -40,6 +41,12 @@ class _SmartPlayerState extends State<SmartPlayer> {
           isLoading = false;
         });
       });
+
+    _controller.addListener(() {
+      if (mounted) {
+        setState(() {});
+      }
+    });
   }
 
   @override
@@ -69,24 +76,29 @@ class _SmartPlayerState extends State<SmartPlayer> {
     return AspectRatio(
       aspectRatio: _controller.value.aspectRatio,
       child: Stack(
-        alignment: Alignment.center,
         children: [
-          VideoPlayer(_controller),
+          Positioned.fill(
+            child: VideoPlayer(_controller),
+          ),
 
-          GestureDetector(
-            onTap: togglePlayPause,
-            child: Container(
-              color: Colors.transparent,
-              child: Center(
-                child: Icon(
-                  _controller.value.isPlaying
-                      ? Icons.pause_circle
-                      : Icons.play_circle,
-                  size: 70,
-                  color: Colors.white,
+          SmartControls(
+            controller: _controller,
+            onFullscreen: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => Scaffold(
+                    backgroundColor: Colors.black,
+                    body: Center(
+                      child: AspectRatio(
+                        aspectRatio: _controller.value.aspectRatio,
+                        child: VideoPlayer(_controller),
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-            ),
+              );
+            },
           ),
         ],
       ),

@@ -7,8 +7,6 @@
   <img src="https://raw.githubusercontent.com/flutterbysunny/smart_player_kit/main/assets/logo.png" width="300">
 </p>
 
-<h1 align="center">smart_player_kit</h1>
-
 <p align="center">
 Advanced Flutter media player kit with modern controls.
 </p>
