@@ -302,8 +302,54 @@ class AudioScreen extends StatelessWidget {
 
 // ─── Themed Player ────────────────────────────────────────────────────────────
 
-class ThemedPlayerScreen extends StatelessWidget {
+class ThemedPlayerScreen extends StatefulWidget {
   const ThemedPlayerScreen({super.key});
+
+  @override
+  State<ThemedPlayerScreen> createState() => _ThemedPlayerScreenState();
+}
+
+class _ThemedPlayerScreenState extends State<ThemedPlayerScreen> {
+  late SmartPlayerController _controller;
+
+  // Netflix screen ke liye test subtitle
+  static const _testVtt = '''
+WEBVTT
+
+00:00:00.000 --> 00:00:01.500
+Netflix Style Player 🎬
+
+00:00:01.500 --> 00:00:03.000
+SmartPlayerKit — Phase 2
+
+00:00:03.000 --> 00:00:04.500
+Subtitle icon press karo ⬆️
+''';
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = SmartPlayerController(
+      config: SmartPlayerConfig.network(
+        _Urls.bee,
+        controlsStyle: SmartPlayerControlsStyle.netflix,
+        theme: SmartPlayerTheme.netflix(),
+        autoPlay: true,
+      ),
+    );
+    _controller.initialize().then((_) {
+      _controller.subtitleController.parseAndLoad(
+        _testVtt,
+        SubtitleFormat.webvtt,
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -320,6 +366,7 @@ class ThemedPlayerScreen extends StatelessWidget {
           theme: SmartPlayerTheme.netflix(),
         ),
         title: 'Netflix Style Player',
+        controller: _controller, // ✅ controller pass kiya
       ),
     );
   }

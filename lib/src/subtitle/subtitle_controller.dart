@@ -15,7 +15,8 @@ class SubtitleController extends ChangeNotifier {
   SubtitleCue? get currentCue      => _currentCue;
   bool get isLoading               => _isLoading;
   bool get hasSubtitles            => _tracks.isNotEmpty;
-  bool get isEnabled               => _activeIndex >= 0 || _cues.isNotEmpty;
+  // ✅ Fix: sirf _activeIndex check karo — _cues pe depend mat karo
+  bool get isEnabled               => _activeIndex >= 0;
   String? get error                => _error;
   int get cueCount                 => _cues.length;
 
@@ -47,8 +48,15 @@ class SubtitleController extends ChangeNotifier {
   Future<void> disable() async {
     _activeIndex = -1;
     _currentCue = null;
-    _cues = [];
     notifyListeners();
+  }
+
+  /// Inline cues wapas enable karo (disable ke baad)
+  void enableInline() {
+    if (_cues.isNotEmpty) {
+      _activeIndex = 0;
+      notifyListeners();
+    }
   }
 
   Future<void> _loadTrack(int index) async {
@@ -71,20 +79,22 @@ class SubtitleController extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// ✅ Fix: Direct string se load karo — URL ki zaroorat nahi
-  /// Test ya inline subtitles ke liye use karo
+  /// Direct string se load karo — URL ki zaroorat nahi
   void parseAndLoad(String content, SubtitleFormat format) {
-    _cues = SubtitleParser.parse(content, format);
-    // isEnabled = true karne ke liye activeIndex 0 set karo
+    if (content.trim().isNotEmpty) {
+      _cues = SubtitleParser.parse(content, format);
+    }
+    // ✅ Enable — activeIndex 0
     _activeIndex = 0;
     _currentCue = null;
-    debugPrint('SubtitleController: ${_cues.length} cues loaded from string ✅');
+    debugPrint('SubtitleController: ${_cues.length} cues loaded ✅');
     notifyListeners();
   }
 
-  /// ✅ Fix: Position update — linear scan (short videos ke liye reliable)
+  /// Position update — sirf isEnabled ho tab dikhao
   void updatePosition(Duration position) {
-    if (_cues.isEmpty) {
+    // ✅ Fix: isEnabled false = cue clear karo, subtitle band
+    if (!isEnabled) {
       if (_currentCue != null) {
         _currentCue = null;
         notifyListeners();
@@ -92,10 +102,9 @@ class SubtitleController extends ChangeNotifier {
       return;
     }
 
-    SubtitleCue? found;
+    if (_cues.isEmpty) return;
 
-    // Linear scan — short video mein fast enough hai
-    // Long videos ke liye binary search use karo
+    SubtitleCue? found;
     for (final cue in _cues) {
       if (cue.isActiveAt(position)) {
         found = cue;

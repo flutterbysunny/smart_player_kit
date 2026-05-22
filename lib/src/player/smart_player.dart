@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
 import '../../smart_player_kit.dart';
+
 import '../controls/youtube_controls.dart';
 import '../controls/netflix_controls.dart';
 import '../controls/minimal_controls.dart';
@@ -289,6 +290,7 @@ class _PlayerSurface extends StatelessWidget {
           subtitle: subtitle,
           isFullscreen: isFullscreen,
           onFullscreenToggle: onFullscreen,
+          onSubtitleTap: controller.config.onSubtitleTap, // ✅ config se pass
         );
       case SmartPlayerControlsStyle.minimal:
         return MinimalControls(

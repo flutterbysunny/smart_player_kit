@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../smart_player_kit.dart';
-
+import 'progress_bar.dart';
 
 class NetflixControls extends StatelessWidget {
   final SmartPlayerController controller;
@@ -12,6 +12,10 @@ class NetflixControls extends StatelessWidget {
   final VoidCallback? onNextEpisode;
   final VoidCallback? onPrevEpisode;
 
+  /// ✅ Developer apna custom subtitle UI dena chahta hai toh ye callback pass karo
+  /// Agar null hai toh default _SubtitlePanel bottom sheet open hoga
+  final VoidCallback? onSubtitleTap;
+
   const NetflixControls({
     super.key,
     required this.controller,
@@ -22,6 +26,7 @@ class NetflixControls extends StatelessWidget {
     this.onFullscreenToggle,
     this.onNextEpisode,
     this.onPrevEpisode,
+    this.onSubtitleTap,
   });
 
   @override
@@ -59,7 +64,8 @@ class NetflixControls extends StatelessWidget {
                       subtitle: subtitle,
                       isFullscreen: isFullscreen,
                       onBack: onFullscreenToggle ?? () => Navigator.maybePop(context),
-                      controller: controller, // ✅ pass kiya
+                      controller: controller,
+                      onSubtitleTap: onSubtitleTap, // ✅ pass kiya
                     ),
 
                     // ── Center controls — yahan play/pause hoga ──
@@ -97,7 +103,8 @@ class _NetflixTopBar extends StatelessWidget {
   final String? subtitle;
   final bool isFullscreen;
   final VoidCallback onBack;
-  final SmartPlayerController controller; // ✅ controller add kiya
+  final SmartPlayerController controller;
+  final VoidCallback? onSubtitleTap; // ✅ developer ka custom callback
 
   const _NetflixTopBar({
     this.title,
@@ -105,6 +112,7 @@ class _NetflixTopBar extends StatelessWidget {
     required this.isFullscreen,
     required this.onBack,
     required this.controller,
+    this.onSubtitleTap,
   });
 
   @override
@@ -146,12 +154,12 @@ class _NetflixTopBar extends StatelessWidget {
           // Cast icon
           const Icon(Icons.cast, color: Colors.white, size: 22),
           const SizedBox(width: 16),
-          // ✅ Subtitle icon — press karne par SubtitleSelector open hoga
+          // ✅ Subtitle icon — developer ka callback hai toh woh use karo
+          // warna default _SubtitlePanel open karo
           GestureDetector(
-            onTap: () => _showSubtitlePanel(context),
+            onTap: onSubtitleTap ?? () => _showSubtitlePanel(context),
             child: Icon(
               Icons.subtitles_outlined,
-              // ✅ Active hone par white, inactive par grey
               color: controller.subtitleController.isEnabled
                   ? Colors.white
                   : Colors.white38,
@@ -164,8 +172,6 @@ class _NetflixTopBar extends StatelessWidget {
   }
 
   void _showSubtitlePanel(BuildContext context) {
-    final subCtrl = controller.subtitleController;
-
     showModalBottomSheet(
       context: context,
       backgroundColor: const Color(0xFF1A1A1A),
@@ -173,7 +179,7 @@ class _NetflixTopBar extends StatelessWidget {
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (_) => _SubtitlePanel(
-        subtitleController: subCtrl,
+        subtitleController: controller.subtitleController,
         playerController: controller,
       ),
     );
@@ -484,14 +490,13 @@ class _SubtitlePanel extends StatelessWidget {
               if (hasInlineCues && !hasTracks)
                 _SubTile(
                   label: 'Default Subtitles',
-                  sublabel: '${subtitleController.cueCount} cues',
+                  sublabel: '${subtitleController.cueCount} cues loaded',
                   isSelected: subtitleController.isEnabled,
                   onTap: () {
-                    // Re-enable — activeIndex 0 set karo
-                    subtitleController.parseAndLoad(
-                      '', // already loaded hai
-                      SubtitleFormat.webvtt,
-                    );
+                    // ✅ Fix: activeIndex 0 set karo — cues already hain
+                    if (!subtitleController.isEnabled) {
+                      subtitleController.enableInline();
+                    }
                     Navigator.pop(context);
                   },
                 ),

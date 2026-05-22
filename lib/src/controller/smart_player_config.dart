@@ -6,174 +6,90 @@ import '../theme/smart_player_theme.dart';
 
 /// Video source ka type
 enum SmartPlayerSourceType {
-  /// HTTP/HTTPS network URL
   network,
-
-  /// HLS / M3U8 stream
   hls,
-
-  /// Device storage ka file
   file,
-
-  /// App ke andar ka asset
   asset,
 }
 
 /// Controls ka style
 enum SmartPlayerControlsStyle {
-  /// Netflix jaisi dark controls
   netflix,
-
-  /// YouTube jaisi controls
   youtube,
-
-  /// Simple minimal controls
   minimal,
-
-  /// Reels/TikTok style (vertical)
   reels,
-
-  /// Koi controls nahi — khud banao
   none,
 }
 
 /// SmartPlayer ka complete configuration
 class SmartPlayerConfig {
-  // ─── Source ──────────────────────────────────────────────────────────────
-
-  /// Video URL ya file path
+  // ─── Source ───────────────────────────────────────────────────────────────
   final String url;
-
-  /// Source type (auto-detect bhi hota hai)
   final SmartPlayerSourceType sourceType;
 
   // ─── Playback ─────────────────────────────────────────────────────────────
-
-  /// Auto play karo player load hote hi
   final bool autoPlay;
-
-  /// Loop karo video khatam hone par
   final bool loop;
-
-  /// Starting volume (0.0 to 1.0)
   final double volume;
-
-  /// Starting playback speed
   final double playbackSpeed;
-
-  /// Jahan se start karo (resume ke liye)
   final Duration startPosition;
 
   // ─── Resume ───────────────────────────────────────────────────────────────
-
-  /// Netflix-style auto resume — last position se shuru karo
   final bool resumePlayback;
-
-  /// Resume key — unique ID for this video (null = url use hoga)
   final String? resumeKey;
 
   // ─── Controls ─────────────────────────────────────────────────────────────
-
-  /// Controls ka style
   final SmartPlayerControlsStyle controlsStyle;
-
-  /// Controls kitni der baad chhup jayein (seconds)
   final Duration controlsHideDelay;
-
-  /// Fullscreen allow karo
   final bool allowFullscreen;
-
-  /// Playback speed change allow karo
   final bool allowSpeedControl;
 
   // ─── Gestures ─────────────────────────────────────────────────────────────
-
-  /// Double-tap seek allow karo
   final bool enableDoubleTapSeek;
-
-  /// Double-tap mein kitne seconds seek ho
   final int doubleTapSeekSeconds;
-
-  /// Swipe se brightness control
   final bool enableBrightnessGesture;
-
-  /// Swipe se volume control
   final bool enableVolumeGesture;
-
-  /// Pinch zoom allow karo
   final bool enablePinchZoom;
 
   // ─── Subtitles ────────────────────────────────────────────────────────────
-
-  /// Subtitle tracks list
   final List<SubtitleTrack> subtitles;
-
-  /// Default subtitle index
   final int defaultSubtitleIndex;
 
   // ─── Audio Tracks ─────────────────────────────────────────────────────────
-
-  /// Audio tracks list (Hindi, English, etc.)
   final List<AudioTrack> audioTracks;
-
-  /// Default audio track index
   final int defaultAudioTrackIndex;
 
   // ─── Cache ────────────────────────────────────────────────────────────────
-
-  /// Auto cache karo
   final bool enableCache;
-
-  /// Agle video ka URL — preload ke liye
   final String? nextVideoUrl;
 
   // ─── Background ───────────────────────────────────────────────────────────
-
-  /// App minimize hone par bhi play karo
   final bool enableBackgroundPlayback;
 
   // ─── Download ─────────────────────────────────────────────────────────────
-
-  /// Download button show karo
   final bool showDownloadButton;
 
   // ─── Thumbnail ────────────────────────────────────────────────────────────
-
-  /// Video thumbnail URL (loading ke time dikhao)
   final String? thumbnailUrl;
-
-  /// Thumbnail widget (custom)
   final Widget? placeholder;
 
   // ─── DRM ──────────────────────────────────────────────────────────────────
-
-  /// DRM configuration (Widevine / FairPlay)
   final DrmConfig? drmConfig;
 
   // ─── Theme ────────────────────────────────────────────────────────────────
-
-  /// Player ka custom theme
   final SmartPlayerTheme? theme;
 
   // ─── Callbacks ────────────────────────────────────────────────────────────
-
-  /// Video ready hone par
   final VoidCallback? onReady;
-
-  /// Play start hone par
   final VoidCallback? onPlay;
-
-  /// Pause hone par
   final VoidCallback? onPause;
-
-  /// Video complete hone par
   final VoidCallback? onComplete;
-
-  /// Error aane par
   final void Function(String error)? onError;
-
-  /// Position change hone par (seek bar ke liye)
   final void Function(Duration position)? onPositionChanged;
+
+  /// ✅ Developer apna custom subtitle UI dena chahta hai toh ye pass karo
+  /// null = default bottom sheet open hoga
+  final VoidCallback? onSubtitleTap;
 
   const SmartPlayerConfig({
     required this.url,
@@ -225,23 +141,21 @@ class SmartPlayerConfig {
     this.onComplete,
     this.onError,
     this.onPositionChanged,
+    this.onSubtitleTap,
   });
 
-  /// Simple network video — one liner!
-  ///
-  /// ```dart
-  /// SmartPlayerConfig.network('https://example.com/video.mp4')
-  /// ```
+  // ─── Named Constructors ───────────────────────────────────────────────────
+
   factory SmartPlayerConfig.network(
       String url, {
         bool autoPlay = true,
         bool resumePlayback = false,
         String? resumeKey,
-        bool enableBackgroundPlayback = false, // 👈 ADD THIS
-        SmartPlayerControlsStyle controlsStyle =
-            SmartPlayerControlsStyle.youtube,
+        bool enableBackgroundPlayback = false,
+        SmartPlayerControlsStyle controlsStyle = SmartPlayerControlsStyle.youtube,
         SmartPlayerTheme? theme,
         VoidCallback? onComplete,
+        VoidCallback? onSubtitleTap,
       }) {
     return SmartPlayerConfig(
       url: url,
@@ -249,15 +163,14 @@ class SmartPlayerConfig {
       autoPlay: autoPlay,
       resumePlayback: resumePlayback,
       resumeKey: resumeKey,
-      enableBackgroundPlayback:
-      enableBackgroundPlayback, // 👈 ADD THIS
+      enableBackgroundPlayback: enableBackgroundPlayback,
       controlsStyle: controlsStyle,
       theme: theme,
       onComplete: onComplete,
+      onSubtitleTap: onSubtitleTap,
     );
   }
 
-  /// HLS stream ke liye
   factory SmartPlayerConfig.hls(
       String url, {
         bool autoPlay = true,
@@ -265,6 +178,7 @@ class SmartPlayerConfig {
         List<SubtitleTrack> subtitles = const [],
         List<AudioTrack> audioTracks = const [],
         SmartPlayerTheme? theme,
+        VoidCallback? onSubtitleTap,
       }) {
     return SmartPlayerConfig(
       url: url,
@@ -274,10 +188,10 @@ class SmartPlayerConfig {
       subtitles: subtitles,
       audioTracks: audioTracks,
       theme: theme,
+      onSubtitleTap: onSubtitleTap,
     );
   }
 
-  /// Local file ke liye
   factory SmartPlayerConfig.file(String filePath) {
     return SmartPlayerConfig(
       url: filePath,
@@ -285,13 +199,14 @@ class SmartPlayerConfig {
     );
   }
 
-  /// Asset ke liye
   factory SmartPlayerConfig.asset(String assetPath) {
     return SmartPlayerConfig(
       url: assetPath,
       sourceType: SmartPlayerSourceType.asset,
     );
   }
+
+  // ─── copyWith ─────────────────────────────────────────────────────────────
 
   SmartPlayerConfig copyWith({
     String? url,
@@ -303,8 +218,34 @@ class SmartPlayerConfig {
     Duration? startPosition,
     bool? resumePlayback,
     String? resumeKey,
+    bool? enableBackgroundPlayback,
     SmartPlayerControlsStyle? controlsStyle,
+    Duration? controlsHideDelay,
+    bool? allowFullscreen,
+    bool? allowSpeedControl,
+    bool? enableDoubleTapSeek,
+    int? doubleTapSeekSeconds,
+    bool? enableBrightnessGesture,
+    bool? enableVolumeGesture,
+    bool? enablePinchZoom,
+    List<SubtitleTrack>? subtitles,
+    int? defaultSubtitleIndex,
+    List<AudioTrack>? audioTracks,
+    int? defaultAudioTrackIndex,
+    bool? enableCache,
+    String? nextVideoUrl,
+    bool? showDownloadButton,
+    String? thumbnailUrl,
+    Widget? placeholder,
+    DrmConfig? drmConfig,
     SmartPlayerTheme? theme,
+    VoidCallback? onReady,
+    VoidCallback? onPlay,
+    VoidCallback? onPause,
+    VoidCallback? onComplete,
+    void Function(String)? onError,
+    void Function(Duration)? onPositionChanged,
+    VoidCallback? onSubtitleTap,
   }) {
     return SmartPlayerConfig(
       url: url ?? this.url,
@@ -316,8 +257,37 @@ class SmartPlayerConfig {
       startPosition: startPosition ?? this.startPosition,
       resumePlayback: resumePlayback ?? this.resumePlayback,
       resumeKey: resumeKey ?? this.resumeKey,
+      enableBackgroundPlayback:
+      enableBackgroundPlayback ?? this.enableBackgroundPlayback,
       controlsStyle: controlsStyle ?? this.controlsStyle,
+      controlsHideDelay: controlsHideDelay ?? this.controlsHideDelay,
+      allowFullscreen: allowFullscreen ?? this.allowFullscreen,
+      allowSpeedControl: allowSpeedControl ?? this.allowSpeedControl,
+      enableDoubleTapSeek: enableDoubleTapSeek ?? this.enableDoubleTapSeek,
+      doubleTapSeekSeconds: doubleTapSeekSeconds ?? this.doubleTapSeekSeconds,
+      enableBrightnessGesture:
+      enableBrightnessGesture ?? this.enableBrightnessGesture,
+      enableVolumeGesture: enableVolumeGesture ?? this.enableVolumeGesture,
+      enablePinchZoom: enablePinchZoom ?? this.enablePinchZoom,
+      subtitles: subtitles ?? this.subtitles,
+      defaultSubtitleIndex: defaultSubtitleIndex ?? this.defaultSubtitleIndex,
+      audioTracks: audioTracks ?? this.audioTracks,
+      defaultAudioTrackIndex:
+      defaultAudioTrackIndex ?? this.defaultAudioTrackIndex,
+      enableCache: enableCache ?? this.enableCache,
+      nextVideoUrl: nextVideoUrl ?? this.nextVideoUrl,
+      showDownloadButton: showDownloadButton ?? this.showDownloadButton,
+      thumbnailUrl: thumbnailUrl ?? this.thumbnailUrl,
+      placeholder: placeholder ?? this.placeholder,
+      drmConfig: drmConfig ?? this.drmConfig,
       theme: theme ?? this.theme,
+      onReady: onReady ?? this.onReady,
+      onPlay: onPlay ?? this.onPlay,
+      onPause: onPause ?? this.onPause,
+      onComplete: onComplete ?? this.onComplete,
+      onError: onError ?? this.onError,
+      onPositionChanged: onPositionChanged ?? this.onPositionChanged,
+      onSubtitleTap: onSubtitleTap ?? this.onSubtitleTap,
     );
   }
 }
