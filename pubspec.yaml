@@ -12,9 +12,30 @@ dependencies:
 
   plugin_platform_interface: ^2.0.2
 
-  video_player: ^2.10.0
-  chewie: ^1.11.3
-  visibility_detector: ^0.4.0+2
+  # ─── Video Player ──────────────────────────────────────────────────────────
+  video_player: ^2.8.6           # Core video playback
+
+  # ─── Audio ─────────────────────────────────────────────────────────────────
+  just_audio: ^0.9.40            # Advanced audio (podcast/music)
+  audio_session: ^0.1.21         # Background + lock screen handling
+
+  # ─── Storage ───────────────────────────────────────────────────────────────
+  shared_preferences: ^2.3.2     # Resume position save karo
+
+  # ─── Network ───────────────────────────────────────────────────────────────
+  dio: ^5.7.0                    # HTTP downloads + subtitle fetch
+  connectivity_plus: ^6.0.5      # Network speed monitor
+
+  # ─── System ────────────────────────────────────────────────────────────────
+  wakelock_plus: ^1.2.8          # Screen on rakhna video ke time
+  screen_brightness: ^0.2.2+1    # Brightness gesture control
+  volume_controller: ^2.0.8      # Volume gesture control
+
+  # ─── Cache ─────────────────────────────────────────────────────────────────
+  flutter_cache_manager: ^3.4.1  # Smart video caching
+
+  # ─── Notifications ─────────────────────────────────────────────────────────
+  flutter_local_notifications: ^17.2.3
 
 dev_dependencies:
   flutter_test:
