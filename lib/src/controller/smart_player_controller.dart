@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:video_player/video_player.dart';
 import '../../smart_player_kit.dart';
-import '../subtitle/subtitle_controller.dart';
 import '../background/background_service.dart';
 import '../background/notification_controls.dart';
 

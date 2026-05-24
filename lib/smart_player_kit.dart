@@ -2,39 +2,7 @@
 ///
 /// OTT, Course, Podcast, Reels, Music — sab ek package mein.
 ///
-/// ## Quick Start
-///
-/// ```dart
-/// // Simplest usage — one line!
-/// SmartPlayer.network('https://example.com/video.mp4')
-///
-/// // With resume + subtitles
-/// SmartPlayer.config(
-///   SmartPlayerConfig.hls(
-///     'https://example.com/stream.m3u8',
-///     resumePlayback: true,
-///     subtitles: [
-///       SubtitleTrack(label: 'English', languageCode: 'en', url: 'https://...'),
-///       SubtitleTrack(label: 'Hindi', languageCode: 'hi', url: 'https://...'),
-///     ],
-///   ),
-/// )
-///
-/// // Reels player
-/// SmartReelsPlayer(
-///   videos: [
-///     ReelItem(videoUrl: 'https://...'),
-///     ReelItem(videoUrl: 'https://...'),
-///   ],
-/// )
-///
-/// // Audio/Podcast player
-/// SmartAudioPlayer(
-///   audioUrl: 'https://example.com/episode.mp3',
-///   title: 'Episode 42',
-///   artist: 'My Podcast',
-/// )
-/// ```
+/// See README.md for complete usage examples.
 library smart_player_kit;
 
 // ─── Core ─────────────────────────────────────────────────────────────────────
@@ -72,3 +40,7 @@ export 'src/controls/minimal_controls.dart';
 export 'src/subtitle/subtitle_controller.dart';
 export 'src/subtitle/subtitle_overlay.dart';
 export 'src/subtitle/subtitle_selector.dart';
+
+// ─── Mini Player ──────────────────────────────────────────────────────────────
+export 'src/mini_player/mini_player_controller.dart';
+export 'src/mini_player/smart_mini_player.dart';

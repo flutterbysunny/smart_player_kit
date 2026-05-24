@@ -1,12 +1,39 @@
 import 'package:flutter/material.dart';
+import 'package:video_player/video_player.dart';
 import 'package:smart_player_kit/smart_player_kit.dart';
 
 void main() {
   runApp(const SmartPlayerExampleApp());
 }
 
-class SmartPlayerExampleApp extends StatelessWidget {
+// ─────────────────────────────────────────────────────────────────────────────
+// App root
+// ─────────────────────────────────────────────────────────────────────────────
+
+class SmartPlayerExampleApp extends StatefulWidget {
   const SmartPlayerExampleApp({super.key});
+
+  @override
+  State<SmartPlayerExampleApp> createState() => _SmartPlayerExampleAppState();
+}
+
+class _SmartPlayerExampleAppState extends State<SmartPlayerExampleApp> {
+  final _playerCtrl = SmartPlayerController(
+    config: SmartPlayerConfig.network(
+      'https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4',
+      autoPlay: true,
+    ),
+  );
+
+  final _miniCtrl = MiniPlayerController();
+  final _navKey = GlobalKey<NavigatorState>();
+
+  @override
+  void dispose() {
+    _playerCtrl.dispose();
+    _miniCtrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,13 +41,76 @@ class SmartPlayerExampleApp extends StatelessWidget {
       title: 'SmartPlayerKit Demo',
       theme: ThemeData.dark(useMaterial3: true),
       debugShowCheckedModeBanner: false,
-      home: const HomeScreen(),
+      navigatorKey: _navKey,
+      builder: (context, child) {
+        return Stack(
+          children: [
+            child!,
+
+            // ✅ Live video mini player mein dikhega — same VideoPlayerController
+            ValueListenableBuilder<SmartPlayerValue>(
+              valueListenable: _playerCtrl,
+              builder: (context, val, _) {
+                return SmartMiniPlayer(
+                  miniController: _miniCtrl,
+                  playerController: _playerCtrl,
+                  onExpand: _onMiniPlayerExpand,
+                  videoWidget: _playerCtrl.videoController != null
+                      ? VideoPlayer(_playerCtrl.videoController!)
+                      : null,
+                );
+              },
+            ),
+          ],
+        );
+      },
+      home: HomeScreen(
+        miniCtrl: _miniCtrl,
+        playerCtrl: _playerCtrl,
+      ),
+    );
+  }
+
+  void _onMiniPlayerExpand() {
+    _miniCtrl.expand();
+    _navKey.currentState?.push(
+      MaterialPageRoute(
+        builder: (_) => BasicPlayerScreen(
+          miniCtrl: _miniCtrl,
+          playerCtrl: _playerCtrl,
+          fromMiniPlayer: true,
+        ),
+      ),
     );
   }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// URLs
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _Urls {
+  static const butterfly =
+      'https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4';
+  static const bee =
+      'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4';
+  static const hls =
+      'https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8';
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// HomeScreen
+// ─────────────────────────────────────────────────────────────────────────────
+
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({
+    super.key,
+    required this.miniCtrl,
+    required this.playerCtrl,
+  });
+
+  final MiniPlayerController miniCtrl;
+  final SmartPlayerController playerCtrl;
 
   @override
   Widget build(BuildContext context) {
@@ -31,10 +121,15 @@ class HomeScreen extends StatelessWidget {
         children: [
           _DemoTile(
             title: '🎬 Basic Video Player',
-            subtitle: 'One-liner network video',
+            subtitle: 'One-liner network video + Mini Player',
             onTap: () => Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => const BasicPlayerScreen()),
+              MaterialPageRoute(
+                builder: (_) => BasicPlayerScreen(
+                  miniCtrl: miniCtrl,
+                  playerCtrl: playerCtrl,
+                ),
+              ),
             ),
           ),
           _DemoTile(
@@ -83,45 +178,160 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-// ─── URLs — Flutter official CDN, iOS/Android dono pe tested ──────────────────
-// Source: https://flutter.github.io/assets-for-api-docs/assets/videos/
-// Ye Flutter team khud use karti hai — guaranteed working
-class _Urls {
-  static const butterfly =
-      'https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4';
-  static const bee =
-      'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4';
-  static const hls =
-      'https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8';
+// ─────────────────────────────────────────────────────────────────────────────
+// BasicPlayerScreen
+// ─────────────────────────────────────────────────────────────────────────────
+
+class BasicPlayerScreen extends StatefulWidget {
+  const BasicPlayerScreen({
+    super.key,
+    required this.miniCtrl,
+    required this.playerCtrl,
+    this.fromMiniPlayer = false,
+  });
+
+  final MiniPlayerController miniCtrl;
+  final SmartPlayerController playerCtrl;
+  final bool fromMiniPlayer;
+
+  @override
+  State<BasicPlayerScreen> createState() => _BasicPlayerScreenState();
 }
 
-// ─── Basic Player ─────────────────────────────────────────────────────────────
+class _BasicPlayerScreenState extends State<BasicPlayerScreen> {
+  @override
+  void initState() {
+    super.initState();
 
-class BasicPlayerScreen extends StatelessWidget {
-  const BasicPlayerScreen({super.key});
+    if (!widget.fromMiniPlayer) {
+      widget.playerCtrl.loadNewVideo(
+        SmartPlayerConfig.network(_Urls.butterfly, autoPlay: true),
+      );
+
+      // ✅ PostFrameCallback — build complete hone ke baad call hoga
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        widget.miniCtrl.openMiniPlayer(
+          title: 'Butterfly',
+          subtitle: 'Flutter Official Demo Video',
+        );
+        widget.miniCtrl.expand();
+      });
+    }
+  }
+
+  void _minimize() {
+    widget.miniCtrl.minimize();
+    Navigator.pop(context);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Basic Player')),
-      body: Column(
-        children: [
-          // ✅ One-liner!
-          SmartPlayer.network(_Urls.butterfly, title: 'Butterfly'),
-          const Padding(
-            padding: EdgeInsets.all(16),
-            child: Text(
-              'SmartPlayer.network(url) — bas itna likho, sab kuch ready!',
-              style: TextStyle(color: Colors.white70),
+      backgroundColor: Colors.black,
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // ── ✅ Minimize bar — SmartPlayer ke UPAR, alag row mein ──
+            Container(
+              color: Colors.black,
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+              child: Row(
+                children: [
+                  // Minimize button — clearly visible
+                  IconButton(
+                    style: IconButton.styleFrom(
+                      backgroundColor: Colors.white10,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    icon: const Icon(
+                      Icons.keyboard_arrow_down_rounded,
+                      color: Colors.white,
+                      size: 26,
+                    ),
+                    tooltip: 'Minimize',
+                    onPressed: _minimize,
+                  ),
+                  const SizedBox(width: 8),
+                  const Text(
+                    'Butterfly',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const Spacer(),
+                  // Extra actions
+                  IconButton(
+                    icon: const Icon(Icons.more_vert,
+                        color: Colors.white70, size: 22),
+                    onPressed: () {},
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+
+            // ── Video player ──────────────────────────────────────────
+            SmartPlayer.config(
+              SmartPlayerConfig.network(
+                _Urls.butterfly,
+                autoPlay: true,
+              ),
+              title: 'Butterfly',
+              controller: widget.playerCtrl,
+            ),
+
+            // ── Info panel ────────────────────────────────────────────
+            const Padding(
+              padding: EdgeInsets.fromLTRB(16, 14, 16, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Butterfly',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    'Flutter Official Demo Video',
+                    style: TextStyle(color: Colors.white54, fontSize: 13),
+                  ),
+                  SizedBox(height: 14),
+                  Row(
+                    children: [
+                      Icon(Icons.info_outline,
+                          color: Colors.white24, size: 15),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Upar ↑ arrow button dabao — video chalti rahegi '
+                              'aur bottom-right mein mini player dikhega.',
+                          style: TextStyle(
+                              color: Colors.white24, fontSize: 12),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
-// ─── HLS Player ───────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// HlsPlayerScreen
+// ─────────────────────────────────────────────────────────────────────────────
 
 class HlsPlayerScreen extends StatefulWidget {
   const HlsPlayerScreen({super.key});
@@ -131,9 +341,10 @@ class HlsPlayerScreen extends StatefulWidget {
 }
 
 class _HlsPlayerScreenState extends State<HlsPlayerScreen> {
-  late SmartPlayerController _controller;
+  late final SmartPlayerController _controller = SmartPlayerController(
+    config: SmartPlayerConfig.hls(_Urls.hls, autoPlay: true),
+  );
 
-  // Bee video ke saath match karta VTT (4 second video)
   static const _testVtt = '''
 WEBVTT
 
@@ -150,11 +361,7 @@ Subtitle working hai! ✅
   @override
   void initState() {
     super.initState();
-    _controller = SmartPlayerController(
-      config: SmartPlayerConfig.hls(_Urls.hls, autoPlay: true),
-    );
     _controller.initialize().then((_) {
-      // ✅ Initialize ke baad directly parse karo
       _controller.subtitleController.parseAndLoad(
         _testVtt,
         SubtitleFormat.webvtt,
@@ -177,7 +384,7 @@ Subtitle working hai! ✅
           SmartPlayer.config(
             SmartPlayerConfig.hls(_Urls.hls),
             title: 'Subtitle Demo',
-            controller: _controller,  // ✅ same controller pass karo
+            controller: _controller,
           ),
           const SizedBox(height: 16),
           const Padding(
@@ -194,7 +401,9 @@ Subtitle working hai! ✅
   }
 }
 
-// ─── Auto Resume ──────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// ResumePlayerScreen
+// ─────────────────────────────────────────────────────────────────────────────
 
 class ResumePlayerScreen extends StatelessWidget {
   const ResumePlayerScreen({super.key});
@@ -226,7 +435,9 @@ class ResumePlayerScreen extends StatelessWidget {
   }
 }
 
-// ─── Reels ────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// ReelsScreen
+// ─────────────────────────────────────────────────────────────────────────────
 
 class ReelsScreen extends StatelessWidget {
   const ReelsScreen({super.key});
@@ -276,12 +487,13 @@ class ReelsScreen extends StatelessWidget {
   }
 }
 
-// ─── Audio ────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// AudioScreen
+// ─────────────────────────────────────────────────────────────────────────────
 
 class AudioScreen extends StatelessWidget {
   const AudioScreen({super.key});
 
-  // MP3 — Internet Archive se, free public domain audio
   static const _audioUrl =
       'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
 
@@ -300,7 +512,9 @@ class AudioScreen extends StatelessWidget {
   }
 }
 
-// ─── Themed Player ────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// ThemedPlayerScreen
+// ─────────────────────────────────────────────────────────────────────────────
 
 class ThemedPlayerScreen extends StatefulWidget {
   const ThemedPlayerScreen({super.key});
@@ -310,9 +524,15 @@ class ThemedPlayerScreen extends StatefulWidget {
 }
 
 class _ThemedPlayerScreenState extends State<ThemedPlayerScreen> {
-  late SmartPlayerController _controller;
+  late final SmartPlayerController _controller = SmartPlayerController(
+    config: SmartPlayerConfig.network(
+      _Urls.bee,
+      controlsStyle: SmartPlayerControlsStyle.netflix,
+      theme: SmartPlayerTheme.netflix(),
+      autoPlay: true,
+    ),
+  );
 
-  // Netflix screen ke liye test subtitle
   static const _testVtt = '''
 WEBVTT
 
@@ -329,14 +549,6 @@ Subtitle icon press karo ⬆️
   @override
   void initState() {
     super.initState();
-    _controller = SmartPlayerController(
-      config: SmartPlayerConfig.network(
-        _Urls.bee,
-        controlsStyle: SmartPlayerControlsStyle.netflix,
-        theme: SmartPlayerTheme.netflix(),
-        autoPlay: true,
-      ),
-    );
     _controller.initialize().then((_) {
       _controller.subtitleController.parseAndLoad(
         _testVtt,
@@ -366,13 +578,15 @@ Subtitle icon press karo ⬆️
           theme: SmartPlayerTheme.netflix(),
         ),
         title: 'Netflix Style Player',
-        controller: _controller, // ✅ controller pass kiya
+        controller: _controller,
       ),
     );
   }
 }
 
-// ─── Helper ───────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// _DemoTile
+// ─────────────────────────────────────────────────────────────────────────────
 
 class _DemoTile extends StatelessWidget {
   final String title;

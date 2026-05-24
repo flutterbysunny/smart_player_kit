@@ -1,46 +1,57 @@
 name: smart_player_kit
-description: Advanced Flutter media player kit with modern controls and streaming support.
-version: 0.0.1
+description: >-
+  A feature-rich Flutter media player package with YouTube/Netflix-style controls,
+  HLS streaming, subtitles (SRT/WebVTT), audio player, reels/TikTok mode,
+  mini player, background playback, resume support, and analytics.
+version: 1.0.0
+homepage: https://github.com/flutterbysunny/smart_player_kit
+repository: https://github.com/flutterbysunny/smart_player_kit
+issue_tracker: https://github.com/flutterbysunny/smart_player_kit/issues
+
+# pub.dev topics — search mein dikhne ke liye (max 5)
+topics:
+  - video
+  - audio
+  - media-player
+  - streaming
+  - hls
 
 environment:
-  sdk: ^3.10.1
-  flutter: ">=3.3.0"
+  sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=3.10.0"
 
 dependencies:
   flutter:
     sdk: flutter
 
-  plugin_platform_interface: ^2.0.2
+  # ─── Video Player ───────────────────────────────────────────────────────────
+  video_player: ^2.8.6
 
-  # ─── Video Player ──────────────────────────────────────────────────────────
-  video_player: ^2.8.6           # Core video playback
+  # ─── Audio ──────────────────────────────────────────────────────────────────
+  just_audio: ^0.9.40
+  audio_session: ^0.1.21
 
-  # ─── Audio ─────────────────────────────────────────────────────────────────
-  just_audio: ^0.9.40            # Advanced audio (podcast/music)
-  audio_session: ^0.1.21         # Background + lock screen handling
+  # ─── Storage ────────────────────────────────────────────────────────────────
+  shared_preferences: ^2.3.2
 
-  # ─── Storage ───────────────────────────────────────────────────────────────
-  shared_preferences: ^2.3.2     # Resume position save karo
+  # ─── Network ────────────────────────────────────────────────────────────────
+  dio: ^5.7.0
+  connectivity_plus: ^6.0.5
 
-  # ─── Network ───────────────────────────────────────────────────────────────
-  dio: ^5.7.0                    # HTTP downloads + subtitle fetch
-  connectivity_plus: ^6.0.5      # Network speed monitor
+  # ─── System ─────────────────────────────────────────────────────────────────
+  wakelock_plus: ^1.2.8
+  screen_brightness: ^0.2.2+1
+  volume_controller: ^2.0.8
 
-  # ─── System ────────────────────────────────────────────────────────────────
-  wakelock_plus: ^1.2.8          # Screen on rakhna video ke time
-  screen_brightness: ^0.2.2+1    # Brightness gesture control
-  volume_controller: ^2.0.8      # Volume gesture control
+  # ─── Cache ──────────────────────────────────────────────────────────────────
+  flutter_cache_manager: ^3.4.1
 
-  # ─── Cache ─────────────────────────────────────────────────────────────────
-  flutter_cache_manager: ^3.4.1  # Smart video caching
-
-  # ─── Notifications ─────────────────────────────────────────────────────────
+  # ─── Notifications ──────────────────────────────────────────────────────────
   flutter_local_notifications: ^17.2.3
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
   flutter_lints: ^6.0.0
 
 flutter:
@@ -49,6 +60,5 @@ flutter:
       android:
         package: com.example.smart_player_kit
         pluginClass: SmartPlayerKitPlugin
-
       ios:
         pluginClass: SmartPlayerKitPlugin

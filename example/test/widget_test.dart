@@ -1,27 +1,21 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
 import 'package:smart_player_kit_example/main.dart';
 
 void main() {
-  testWidgets('Verify Platform version', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('SmartPlayerKit example app smoke test', (WidgetTester tester) async {
+    // App build karo
+    await tester.pumpWidget(const SmartPlayerExampleApp());
+    await tester.pump();
 
-    // Verify that platform version is retrieved.
-    expect(
-      find.byWidgetPredicate(
-        (Widget widget) => widget is Text &&
-                           widget.data!.startsWith('Running on:'),
-      ),
-      findsOneWidget,
-    );
+    // HomeScreen ka title dikh raha hai
+    expect(find.text('SmartPlayerKit Demo'), findsOneWidget);
+
+    // Saare demo tiles present hain
+    expect(find.text('🎬 Basic Video Player'), findsOneWidget);
+    expect(find.text('📺 HLS Stream'), findsOneWidget);
+    expect(find.text('🔄 Auto Resume'), findsOneWidget);
+    expect(find.text('📱 Reels Player'), findsOneWidget);
+    expect(find.text('🎵 Audio / Podcast'), findsOneWidget);
+    expect(find.text('🎨 Netflix Theme'), findsOneWidget);
   });
 }

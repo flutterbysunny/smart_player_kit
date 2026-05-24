@@ -3,11 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
 import '../../smart_player_kit.dart';
 
-import '../controls/youtube_controls.dart';
-import '../controls/netflix_controls.dart';
-import '../controls/minimal_controls.dart';
-import '../gestures/gesture_detector.dart';
-import '../subtitle/subtitle_overlay.dart';
 
 class SmartPlayer extends StatefulWidget {
   final String? url;
