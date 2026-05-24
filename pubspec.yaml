@@ -37,6 +37,7 @@ dependencies:
   # ─── Network ────────────────────────────────────────────────────────────────
   dio: ^5.7.0
   connectivity_plus: ^6.0.5
+  http: ^1.2.1
 
   # ─── System ─────────────────────────────────────────────────────────────────
   wakelock_plus: ^1.2.8
@@ -48,6 +49,9 @@ dependencies:
 
   # ─── Notifications ──────────────────────────────────────────────────────────
   flutter_local_notifications: ^17.2.3
+
+  # ─── Platform Interface ─────────────────────────────────────────────────────
+  plugin_platform_interface: ^2.1.8
 
 dev_dependencies:
   flutter_test:
