@@ -117,8 +117,6 @@ class _NetflixTopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasSubs = controller.subtitleController.hasSubtitles ||
-        controller.subtitleController.cueCount > 0;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(4, 4, 12, 0),

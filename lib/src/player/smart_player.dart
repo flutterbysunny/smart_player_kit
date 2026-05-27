@@ -285,7 +285,7 @@ class _PlayerSurface extends StatelessWidget {
           subtitle: subtitle,
           isFullscreen: isFullscreen,
           onFullscreenToggle: onFullscreen,
-          onSubtitleTap: controller.config.onSubtitleTap, // ✅ config se pass
+          onSubtitleTap: controller.config.onSubtitleTap,
         );
       case SmartPlayerControlsStyle.minimal:
         return MinimalControls(
@@ -298,7 +298,6 @@ class _PlayerSurface extends StatelessWidget {
       case SmartPlayerControlsStyle.none:
         return const SizedBox.shrink();
       case SmartPlayerControlsStyle.youtube:
-      default:
         return YouTubeControls(
           controller: controller,
           theme: theme,

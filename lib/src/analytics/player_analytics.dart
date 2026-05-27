@@ -3,7 +3,7 @@ class PlayerAnalytics {
   String? _currentVideoUrl;
   Duration _totalDuration = Duration.zero;
   Duration _watchedDuration = Duration.zero;
-  Duration _lastPlayPosition = Duration.zero;
+  Duration lastPlayPosition = Duration.zero;
   int _pauseCount = 0;
   int _seekCount = 0;
   DateTime? _playStartTime;
@@ -23,7 +23,7 @@ class PlayerAnalytics {
 
   void onPlay(Duration position) {
     _playStartTime = DateTime.now();
-    _lastPlayPosition = position;
+    lastPlayPosition = position;
     _isPlaying = true;
 
     onEvent?.call(AnalyticsEvent(
@@ -49,7 +49,7 @@ class PlayerAnalytics {
   void onSeek(Duration newPosition) {
     _seekCount++;
     if (_isPlaying) {
-      _lastPlayPosition = newPosition;
+      lastPlayPosition = newPosition;
       _playStartTime = DateTime.now();
     }
 
