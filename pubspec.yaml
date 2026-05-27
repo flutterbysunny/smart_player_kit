@@ -1,7 +1,7 @@
 name: smart_player_kit
 description: "Advanced Flutter media player — HLS, subtitles, reels, mini player, background playback & analytics."
 
-version: 1.0.0
+version: 1.0.1
 homepage: https://github.com/flutterbysunny/smart_player_kit
 repository: https://github.com/flutterbysunny/smart_player_kit
 issue_tracker: https://github.com/flutterbysunny/smart_player_kit/issues

@@ -1,5 +1,26 @@
 # Changelog
 
+## 1.0.1
+
+### 🐛 Bug Fixes & Improvements
+
+- Fixed `withOpacity` deprecated calls — replaced with `withValues(alpha:)`
+- Fixed `onPopInvoked` deprecated — replaced with `onPopInvokedWithResult`
+- Fixed `AndroidNotificationAction` constructor for flutter_local_notifications v21
+- Fixed `initialize()` named parameter `settings:` for notifications v21
+- Fixed unnecessary imports across controls and subtitle files
+- Fixed curly braces in subtitle parser if-statement
+- Fixed `library` name declaration warning
+- Updated all dependencies to latest stable versions:
+    - `audio_session` → `^0.2.3`
+    - `connectivity_plus` → `^7.1.1`
+    - `flutter_local_notifications` → `^21.0.0`
+    - `just_audio` → `^0.10.5`
+    - `screen_brightness` → `^2.1.8`
+    - `volume_controller` → `^3.5.0`
+- Added `http` dependency for subtitle fetching
+- Added `video_player` to example app dependencies
+
 ## 1.0.0
 
 ### 🎉 Initial stable release
