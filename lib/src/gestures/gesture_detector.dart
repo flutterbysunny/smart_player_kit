@@ -247,7 +247,7 @@ class _SeekIndicator extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 24),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.6),
+          color: Colors.black.withValues(alpha:0.6),
           borderRadius: BorderRadius.circular(50),
         ),
         child: Column(
@@ -295,7 +295,7 @@ class _SwipeIndicator extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 16),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.6),
+          color: Colors.black.withValues(alpha:0.6),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(

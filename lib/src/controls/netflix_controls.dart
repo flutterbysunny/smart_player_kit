@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../smart_player_kit.dart';
-import 'progress_bar.dart';
 
 class NetflixControls extends StatelessWidget {
   final SmartPlayerController controller;
@@ -46,10 +45,10 @@ class NetflixControls extends StatelessWidget {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Colors.black.withOpacity(0.75),
-                    Colors.black.withOpacity(0.2),
-                    Colors.black.withOpacity(0.2),
-                    Colors.black.withOpacity(0.85),
+                    Colors.black.withValues(alpha: 0.75),
+                    Colors.black.withValues(alpha: 0.2),
+                    Colors.black.withValues(alpha: 0.2),
+                    Colors.black.withValues(alpha: 0.85),
                   ],
                   stops: const [0.0, 0.25, 0.65, 1.0],
                 ),

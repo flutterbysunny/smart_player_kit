@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-
 import '../../smart_player_kit.dart';
-import 'progress_bar.dart';
 
 /// YouTube-style controls
 class YouTubeControls extends StatelessWidget {
@@ -37,10 +35,10 @@ class YouTubeControls extends StatelessWidget {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Colors.black.withOpacity(0.7),
+                    Colors.black.withValues(alpha:0.7),
                     Colors.transparent,
                     Colors.transparent,
-                    Colors.black.withOpacity(0.8),
+                    Colors.black.withValues(alpha:0.8),
                   ],
                   stops: const [0.0, 0.25, 0.65, 1.0],
                 ),

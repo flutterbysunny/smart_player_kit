@@ -1,11 +1,8 @@
-/// SmartPlayerKit — Complete Flutter Media Player Framework
-///
-/// OTT, Course, Podcast, Reels, Music — sab ek package mein.
-///
-/// See README.md for complete usage examples.
-library smart_player_kit;
+// SmartPlayerKit — Complete Flutter Media Player Framework
+// OTT, Course, Podcast, Reels, Music — sab ek package mein.
+// See README.md for complete usage examples.
 
-// ─── Core ─────────────────────────────────────────────────────────────────────
+// ─── Core ────────────────────────────────────────────────
 export 'src/controller/smart_player_controller.dart';
 export 'src/controller/smart_player_config.dart';
 export 'src/controls/smart_player_state.dart';

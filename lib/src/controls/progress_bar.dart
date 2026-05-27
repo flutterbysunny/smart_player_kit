@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../smart_player_kit.dart';
-import '../controller/smart_player_controller.dart';
 
 /// Custom seekbar with buffer indicator
 class SmartProgressBar extends StatefulWidget {
@@ -159,7 +158,7 @@ class _SmartProgressBarState extends State<SmartProgressBar> {
                                     ? [
                                   BoxShadow(
                                     color: widget.theme.progressBarColor
-                                        .withOpacity(0.4),
+                                        .withValues(alpha: 0.4),
                                     blurRadius: 8,
                                   ),
                                 ]

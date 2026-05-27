@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 
 // ─── Stubs (asli package mein yeh already hote hain) ─────────────────────────
 
-import 'dart:ui';
 
 enum MiniPlayerState { hidden, minimized, expanded }
 
@@ -467,7 +466,7 @@ class _VideoCard extends StatelessWidget {
                 if (isActive)
                   Positioned.fill(
                     child: Container(
-                      color: Colors.red.withOpacity(0.12),
+                      color: Colors.red..withValues(alpha: 0.12),
                       child: const Center(
                         child: Icon(Icons.play_circle_filled,
                             color: Colors.white60, size: 52),

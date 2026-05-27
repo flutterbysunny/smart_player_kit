@@ -22,14 +22,13 @@ class SmartPlayer extends StatefulWidget {
         controller = null;
 
   const SmartPlayer.config(
-      SmartPlayerConfig config, {
+      this.config, {
         super.key,
         this.height,
         this.title,
         this.subtitle,
         this.controller,
-      })  : url = null,
-        config = config;
+      })  : url = null;
 
   static Widget network(String url, {
     Key? key, double? height, String? title,
@@ -176,7 +175,7 @@ class _FullscreenPageState extends State<_FullscreenPage> {
       backgroundColor: Colors.black,
       // ✅ Fix: WillPopScope se back gesture pe bhi portrait restore ho
       body: PopScope(
-        onPopInvoked: (_) {
+        onPopInvokedWithResult: (didPop, result) {
           SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
           SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
         },

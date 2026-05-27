@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../smart_player_kit.dart';
-import 'subtitle_controller.dart';
 
 /// Video ke upar subtitle text — Positioned wrapper ke saath use karo
 class SubtitleOverlay extends StatelessWidget {

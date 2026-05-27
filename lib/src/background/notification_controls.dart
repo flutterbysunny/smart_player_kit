@@ -2,6 +2,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../../smart_player_kit.dart';
 
+// ✅ Top-level function — v21 requirement
+@pragma('vm:entry-point')
+void _onNotificationAction(NotificationResponse response) {
+  NotificationControls._handleAction(response);
+}
+
 /// Lock screen + notification bar mein play/pause/seek controls dikhao
 class NotificationControls {
   static final _plugin = FlutterLocalNotificationsPlugin();
@@ -18,9 +24,12 @@ class NotificationControls {
         requestBadgePermission: false,
         requestSoundPermission: false,
       );
+
+      // ✅ Fix 1: settings: named parameter
       await _plugin.initialize(
-        const InitializationSettings(android: android, iOS: ios),
-        onDidReceiveNotificationResponse: _onAction,
+        settings: const InitializationSettings(android: android, iOS: ios),
+        onDidReceiveNotificationResponse: _onNotificationAction,
+        onDidReceiveBackgroundNotificationResponse: _onNotificationAction,
       );
       _initialized = true;
     } catch (e) {
@@ -42,14 +51,15 @@ class NotificationControls {
         channelDescription: 'SmartPlayer media controls',
         importance: Importance.low,
         priority: Priority.low,
-        ongoing: true,          // swipe se dismiss na ho
+        ongoing: true,
         playSound: false,
         enableVibration: false,
         showWhen: false,
         actions: [
+          // ✅ Fix 2: 2 positional args — id, title
           const AndroidNotificationAction(
             'action_prev',
-            '',                 // Icon only
+            '',
             icon: DrawableResourceAndroidBitmap('@drawable/ic_skip_previous'),
             showsUserInterface: false,
           ),
@@ -70,31 +80,34 @@ class NotificationControls {
         ],
       );
 
+      // ✅ Fix 3: id: named parameter
       await _plugin.show(
-        _notifId,
-        title,
-        artist,
-        NotificationDetails(android: android),
+        id: _notifId,
+        title: title,
+        body: artist,
+        notificationDetails: NotificationDetails(android: android),
       );
     } catch (e) {
       debugPrint('SmartPlayer: Notification show failed — $e');
     }
   }
 
-  /// Notification dismiss karo (player close hone par)
+  /// Notification dismiss karo
   static Future<void> dismiss() async {
     try {
-      await _plugin.cancel(_notifId);
+      // ✅ Fix 4: id: named parameter
+      await _plugin.cancel(id: _notifId);
     } catch (_) {}
   }
 
+  // ── Controller binding ────────────────────────────────────
   static SmartPlayerController? _controller;
 
   static void bindController(SmartPlayerController ctrl) {
     _controller = ctrl;
   }
 
-  static void _onAction(NotificationResponse response) {
+  static void _handleAction(NotificationResponse response) {
     final ctrl = _controller;
     if (ctrl == null) return;
 

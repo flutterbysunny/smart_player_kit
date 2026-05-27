@@ -294,7 +294,7 @@ class _Gradient extends StatelessWidget {
           begin: Alignment.topCenter,
           end: Alignment.center,
           colors: [
-            Colors.black.withOpacity(0.55),
+            Colors.black.withValues(alpha: 0.55),
             Colors.transparent,
           ],
         ),
@@ -324,7 +324,7 @@ class _PlayPauseBtn extends StatelessWidget {
             width: 32,
             height: 32,
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.55),
+              color: Colors.black.withValues(alpha: 0.55),
               shape: BoxShape.circle,
             ),
             child: Icon(
@@ -356,7 +356,7 @@ class _CloseBtn extends StatelessWidget {
         width: 28,
         height: 28,
         decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.55),
+          color: Colors.black.withValues(alpha:0.55),
           shape: BoxShape.circle,
         ),
         child: const Icon(Icons.close_rounded, color: Colors.white, size: 16),

@@ -1,8 +1,6 @@
 name: smart_player_kit
-description: >-
-  A feature-rich Flutter media player package with YouTube/Netflix-style controls,
-  HLS streaming, subtitles (SRT/WebVTT), audio player, reels/TikTok mode,
-  mini player, background playback, resume support, and analytics.
+description: "Advanced Flutter media player — HLS, subtitles, reels, mini player, background playback & analytics."
+
 version: 1.0.0
 homepage: https://github.com/flutterbysunny/smart_player_kit
 repository: https://github.com/flutterbysunny/smart_player_kit
@@ -25,30 +23,18 @@ dependencies:
     sdk: flutter
 
   # ─── Video Player ───────────────────────────────────────────────────────────
-  video_player: ^2.8.6
-
-  # ─── Audio ──────────────────────────────────────────────────────────────────
-  just_audio: ^0.9.40
-  audio_session: ^0.1.21
-
-  # ─── Storage ────────────────────────────────────────────────────────────────
-  shared_preferences: ^2.3.2
-
-  # ─── Network ────────────────────────────────────────────────────────────────
-  dio: ^5.7.0
-  connectivity_plus: ^6.0.5
-  http: ^1.2.1
-
-  # ─── System ─────────────────────────────────────────────────────────────────
-  wakelock_plus: ^1.2.8
-  screen_brightness: ^0.2.2+1
-  volume_controller: ^2.0.8
-
-  # ─── Cache ──────────────────────────────────────────────────────────────────
+  video_player: ^2.11.1
+  just_audio: ^0.10.5
+  audio_session: ^0.2.3
+  shared_preferences: ^2.5.5
+  dio: ^5.9.2
+  http: ^1.6.0
+  connectivity_plus: ^7.1.1
+  wakelock_plus: ^1.6.1
+  screen_brightness: ^2.1.8
+  volume_controller: ^3.5.0
   flutter_cache_manager: ^3.4.1
-
-  # ─── Notifications ──────────────────────────────────────────────────────────
-  flutter_local_notifications: ^17.2.3
+  flutter_local_notifications: ^21.0.0
 
   # ─── Platform Interface ─────────────────────────────────────────────────────
   plugin_platform_interface: ^2.1.8
@@ -66,3 +52,11 @@ flutter:
         pluginClass: SmartPlayerKitPlugin
       ios:
         pluginClass: SmartPlayerKitPlugin
+
+platforms:
+  android:
+  ios:
+  web:
+  windows:
+  macos:
+  linux:

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../smart_player_kit.dart';
-import 'subtitle_controller.dart';
 
 /// Bottom sheet — subtitle language select karo
 class SubtitleSelector extends StatelessWidget {

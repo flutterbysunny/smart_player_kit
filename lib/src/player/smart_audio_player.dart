@@ -163,7 +163,7 @@ class _FullAudioPlayer extends StatelessWidget {
                 color: Colors.grey.shade800,
                 boxShadow: [
                   BoxShadow(
-                    color: theme.primaryColor.withOpacity(0.3),
+                    color: theme.primaryColor.withValues(alpha: 0.3),
                     blurRadius: 30,
                     spreadRadius: 5,
                   ),

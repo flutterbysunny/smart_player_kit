@@ -152,7 +152,9 @@ class SubtitleParser {
       // NOTE / STYLE / REGION blocks skip karo
       if (lines[0].startsWith('NOTE') ||
           lines[0].startsWith('STYLE') ||
-          lines[0].startsWith('REGION')) continue;
+          lines[0].startsWith('REGION')) {
+        continue;
+      }
 
       // --> wali line dhundo
       int timeIdx = -1;

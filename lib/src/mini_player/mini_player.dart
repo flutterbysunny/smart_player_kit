@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../smart_player_kit.dart';
-import 'mini_player_controller.dart';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 

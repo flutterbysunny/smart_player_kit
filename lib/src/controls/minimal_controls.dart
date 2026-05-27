@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-
 import '../../smart_player_kit.dart';
-import 'progress_bar.dart';
 
 /// Minimal controls — clean, distraction-free
 /// Sirf: play/pause + seekbar + fullscreen
@@ -41,7 +39,7 @@ class MinimalControls extends StatelessWidget {
                       end: Alignment.bottomCenter,
                       colors: [
                         Colors.transparent,
-                        Colors.black.withOpacity(0.5),
+                        Colors.black.withValues(alpha: 0.5),
                       ],
                       stops: const [0.5, 1.0],
                     ),
@@ -103,9 +101,9 @@ class _MinimalCenter extends StatelessWidget {
         width: 56,
         height: 56,
         decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.5),
+          color: Colors.black.withValues(alpha:0.5),
           shape: BoxShape.circle,
-          border: Border.all(color: Colors.white.withOpacity(0.8), width: 1.5),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.8), width: 1.5),
         ),
         child: const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 34),
       ),
