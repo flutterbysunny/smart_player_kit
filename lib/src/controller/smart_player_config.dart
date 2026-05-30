@@ -59,6 +59,9 @@ class SmartPlayerConfig {
   final List<AudioTrack> audioTracks;
   final int defaultAudioTrackIndex;
 
+  final Map<String, String>? headers;
+
+
   // ─── Cache ────────────────────────────────────────────────────────────────
   final bool enableCache;
   final String? nextVideoUrl;
@@ -94,6 +97,7 @@ class SmartPlayerConfig {
   const SmartPlayerConfig({
     required this.url,
     this.sourceType = SmartPlayerSourceType.network,
+    this.headers,
     // Playback
     this.autoPlay = true,
     this.loop = false,

@@ -41,3 +41,6 @@ export 'src/subtitle/subtitle_selector.dart';
 // ─── Mini Player ──────────────────────────────────────────────────────────────
 export 'src/mini_player/mini_player_controller.dart';
 export 'src/mini_player/smart_mini_player.dart';
+
+// ─── PiP ──────────────────────────────────────────────────
+export 'src/pip/pip_controller.dart';

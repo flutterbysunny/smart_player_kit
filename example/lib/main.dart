@@ -3,7 +3,10 @@ import 'package:video_player/video_player.dart';
 import 'package:smart_player_kit/smart_player_kit.dart';
 
 void main() {
-  runApp(const SmartPlayerExampleApp());
+  runApp(const MaterialApp(
+    debugShowCheckedModeBanner: false,
+    home: SmartPlayerExampleApp()
+  ));
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -52,6 +55,7 @@ class _SmartPlayerExampleAppState extends State<SmartPlayerExampleApp> {
               valueListenable: _playerCtrl,
               builder: (context, val, _) {
                 return SmartMiniPlayer(
+
                   miniController: _miniCtrl,
                   playerController: _playerCtrl,
                   onExpand: _onMiniPlayerExpand,
@@ -194,21 +198,39 @@ class BasicPlayerScreen extends StatefulWidget {
   final SmartPlayerController playerCtrl;
   final bool fromMiniPlayer;
 
+  // ✅ pipController widget mein nahi — State mein hoga
   @override
   State<BasicPlayerScreen> createState() => _BasicPlayerScreenState();
 }
 
 class _BasicPlayerScreenState extends State<BasicPlayerScreen> {
+  // ✅ late final — initState mein initialize hoga
+  late final PipController _pipController;
+  bool _isPipMode = false; // ✅ PiP state track karo
+
   @override
   void initState() {
     super.initState();
+
+    // ✅ underscore se access karo
+    _pipController = PipController();
+    _pipController.initialize();
+
+    // ✅ PiP mode change listener
+    _pipController.channel.setMethodCallHandler((call) async {
+      if (call.method == 'pipModeChanged') {
+        setState(() {
+          _isPipMode = call.arguments as bool;
+        });
+      }
+    });
+
 
     if (!widget.fromMiniPlayer) {
       widget.playerCtrl.loadNewVideo(
         SmartPlayerConfig.network(_Urls.butterfly, autoPlay: true),
       );
 
-      // ✅ PostFrameCallback — build complete hone ke baad call hoga
       WidgetsBinding.instance.addPostFrameCallback((_) {
         widget.miniCtrl.openMiniPlayer(
           title: 'Butterfly',
@@ -217,6 +239,12 @@ class _BasicPlayerScreenState extends State<BasicPlayerScreen> {
         widget.miniCtrl.expand();
       });
     }
+  }
+
+  @override
+  void dispose() {
+    _pipController.dispose();
+    super.dispose();
   }
 
   void _minimize() {
@@ -232,96 +260,71 @@ class _BasicPlayerScreenState extends State<BasicPlayerScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── ✅ Minimize bar — SmartPlayer ke UPAR, alag row mein ──
-            Container(
-              color: Colors.black,
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-              child: Row(
-                children: [
-                  // Minimize button — clearly visible
-                  IconButton(
-                    style: IconButton.styleFrom(
-                      backgroundColor: Colors.white10,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+            // ✅ PiP mode mein controls hide karo
+            if (!_isPipMode)
+              Container(
+                color: Colors.black,
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                child: Row(
+                  children: [
+                    IconButton(
+                      constraints: const BoxConstraints(),
+                      padding: const EdgeInsets.all(8),
+                      icon: const Icon(
+                        Icons.keyboard_arrow_down_rounded,
+                        color: Colors.white,
+                        size: 22,
                       ),
+                      onPressed: _minimize,
                     ),
-                    icon: const Icon(
-                      Icons.keyboard_arrow_down_rounded,
-                      color: Colors.white,
-                      size: 26,
+                    const Spacer(),
+                    IconButton(
+                      constraints: const BoxConstraints(),
+                      padding: const EdgeInsets.all(8),
+                      icon: const Icon(
+                        Icons.picture_in_picture_alt,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                      onPressed: () => _pipController.enterPip(),
                     ),
-                    tooltip: 'Minimize',
-                    onPressed: _minimize,
-                  ),
-                  const SizedBox(width: 8),
-                  const Text(
-                    'Butterfly',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const Spacer(),
-                  // Extra actions
-                  IconButton(
-                    icon: const Icon(Icons.more_vert,
-                        color: Colors.white70, size: 22),
-                    onPressed: () {},
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
 
-            // ── Video player ──────────────────────────────────────────
-            SmartPlayer.config(
-              SmartPlayerConfig.network(
-                _Urls.butterfly,
-                autoPlay: true,
+            // ✅ PiP mein video full screen le lo
+            _isPipMode
+                ? Expanded(
+              child: SmartPlayer.config(
+                SmartPlayerConfig.network(_Urls.butterfly, autoPlay: true),
+                title: 'Butterfly',
+                controller: widget.playerCtrl,
               ),
+            )
+                : SmartPlayer.config(
+              SmartPlayerConfig.network(_Urls.butterfly, autoPlay: true),
               title: 'Butterfly',
               controller: widget.playerCtrl,
             ),
 
-            // ── Info panel ────────────────────────────────────────────
-            const Padding(
-              padding: EdgeInsets.fromLTRB(16, 14, 16, 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Butterfly',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    'Flutter Official Demo Video',
-                    style: TextStyle(color: Colors.white54, fontSize: 13),
-                  ),
-                  SizedBox(height: 14),
-                  Row(
-                    children: [
-                      Icon(Icons.info_outline,
-                          color: Colors.white24, size: 15),
-                      SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          'Upar ↑ arrow button dabao — video chalti rahegi '
-                              'aur bottom-right mein mini player dikhega.',
-                          style: TextStyle(
-                              color: Colors.white24, fontSize: 12),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+            // ✅ PiP mein info panel hide karo
+            if (!_isPipMode)
+              const Padding(
+                padding: EdgeInsets.fromLTRB(16, 14, 16, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Butterfly',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold)),
+                    SizedBox(height: 4),
+                    Text('Flutter Official Demo Video',
+                        style: TextStyle(color: Colors.white54, fontSize: 13)),
+                  ],
+                ),
               ),
-            ),
           ],
         ),
       ),

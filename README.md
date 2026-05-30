@@ -23,6 +23,20 @@
 </p>
 
 ---
+<p align="center">
+  <a href="https://pub.dev/packages/smart_player_kit">
+    <img src="https://img.shields.io/pub/v/smart_player_kit.svg" alt="pub version">
+  </a>
+  <a href="https://pub.dev/packages/smart_player_kit">
+    <img src="https://img.shields.io/pub/likes/smart_player_kit" alt="likes">
+  </a>
+  <a href="https://pub.dev/packages/smart_player_kit">
+    <img src="https://img.shields.io/pub/points/smart_player_kit" alt="pub points">
+  </a>
+  <a href="https://opensource.org/licenses/MIT">
+    <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License">
+  </a>
+</p>
 
 ## ✨ Features
 

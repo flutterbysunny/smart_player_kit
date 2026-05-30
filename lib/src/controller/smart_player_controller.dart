@@ -116,6 +116,9 @@ class SmartPlayerController extends ValueNotifier<SmartPlayerValue> {
       case SmartPlayerSourceType.network:
       case SmartPlayerSourceType.hls:
         return VideoPlayerController.networkUrl(
+          httpHeaders: config.headers ?? {
+
+          },
           Uri.parse(config.url),
           videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
         );

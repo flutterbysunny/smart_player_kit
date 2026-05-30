@@ -20,7 +20,7 @@ class SmartMiniPlayer extends StatefulWidget {
     this.onExpand,
     this.width = 200.0,
     this.height = 120.0,
-    this.edgeMargin = 14.0,
+    this.edgeMargin = 8.0,
     this.bottomOffset = 80.0,
     this.appearDuration = const Duration(milliseconds: 320),
   });
@@ -103,10 +103,20 @@ class _SmartMiniPlayerState extends State<SmartMiniPlayer>
   }
 
   Offset _resolvePosition(Offset dragOffset, Size screen) {
+    // ✅ Screen size zero hone par safe fallback
+    if (screen.width == 0 || screen.height == 0) return Offset.zero;
+
     final raw = _base + dragOffset;
+
+    final minX = widget.edgeMargin;
+    final maxX = screen.width - widget.width - widget.edgeMargin;
+    final minY = widget.edgeMargin;
+    final maxY = screen.height - widget.height - widget.edgeMargin;
+
+    // ✅ max >= min check — negative hone par edge margin use karo
     return Offset(
-      raw.dx.clamp(widget.edgeMargin, screen.width - widget.width - widget.edgeMargin),
-      raw.dy.clamp(widget.edgeMargin, screen.height - widget.height - widget.edgeMargin),
+      raw.dx.clamp(minX, maxX > minX ? maxX : minX),
+      raw.dy.clamp(minY, maxY > minY ? maxY : minY),
     );
   }
 
